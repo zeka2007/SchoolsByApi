@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from . import Student
-from Utils import DateFormat, Config
+from ..Utils import Config
 
 
 class WebUser:
@@ -59,4 +59,3 @@ class WebUser:
                 student_id,
                 self.agent
             )
-

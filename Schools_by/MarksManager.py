@@ -6,7 +6,7 @@ from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 from . import Student, QuarterManager, LessonsManager
-from Utils import PagesManager
+from ..Utils import PagesManager
 
 
 class Mark:
