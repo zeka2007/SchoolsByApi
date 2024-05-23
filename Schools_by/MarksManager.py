@@ -15,7 +15,10 @@ class Mark:
                  value: int | str | None,
                  date: datetime = None
                  ):
-        self.value = value
+        if value.isdigit():
+            self.value = int(value)
+        else:
+            self.value = value
         self.date = date
         self.lesson = lesson
 
@@ -66,7 +69,7 @@ async def get_quarters_marks(student: Student, quarter: int) -> list:
             if mark == '':
                 mark_obj.value = None
             else:
-                mark_obj.value = int(mark)
+                mark_obj.value = mark
 
             q_marks.append(mark_obj)
             i += 1
@@ -147,7 +150,7 @@ async def get_all_marks_from_page(student: Student,
                                         marks.append(
                                             Mark(
                                                 LessonsManager.Lesson(ln),
-                                                int(mark),
+                                                mark,
                                                 date=mark_date
                                             )
                                         )
@@ -175,7 +178,7 @@ async def get_all_marks(student: Student, quarter: int, lesson_obj: LessonsManag
     return r
 
 
-def convert_marks_list(marks: List[Mark | SplitMark]) -> List[int]:
+def convert_marks_list(marks: List[Mark | SplitMark]) -> List[int | str]:
     result = []
     for mark in marks:
         if mark.__class__ == Mark:
