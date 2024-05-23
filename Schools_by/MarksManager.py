@@ -15,8 +15,9 @@ class Mark:
                  value: int | str | None,
                  date: datetime = None
                  ):
-        if value.isdigit():
-            self.value = int(value)
+        if type(value) is str:
+            if value.isdigit():
+                self.value = int(value)
         else:
             self.value = value
         self.date = date
