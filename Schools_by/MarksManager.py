@@ -78,7 +78,7 @@ async def get_all_marks_from_page(student: Student,
                                   interval: dict,
                                   quarter: int,
                                   page: int,
-                                  lesson_name: str = None) -> list:
+                                  lesson_obj: LessonsManager.Lesson = None) -> list:
     # get date
     current_year = datetime.now().year
     start_date = datetime(current_year,
@@ -125,7 +125,7 @@ async def get_all_marks_from_page(student: Student,
                         ln = ln.strip()
 
                         if ln != '':
-                            if ln == lesson_name or lesson_name is None:
+                            if ln == lesson_obj.name or lesson_obj.name is None:
                                 mark = lesson.find('div', {'class': 'mark_box'}).text
                                 mark = mark.replace('\n', '')
                                 if mark != '':
@@ -158,7 +158,7 @@ async def get_all_marks_from_page(student: Student,
         return marks
 
 
-async def get_all_marks(student: Student, quarter: int, lesson_name: str = None) -> list:
+async def get_all_marks(student: Student, quarter: int, lesson_obj: LessonsManager.Lesson = None) -> list:
     interval = await PagesManager.get_intervals(student)
 
     weeks = PagesManager.get_pages_count(interval, quarter)
@@ -166,7 +166,7 @@ async def get_all_marks(student: Student, quarter: int, lesson_name: str = None)
     tasks = []
 
     for i in range(1, weeks + 1):
-        task = asyncio.create_task(get_all_marks_from_page(student, interval, quarter, i, lesson_name))
+        task = asyncio.create_task(get_all_marks_from_page(student, interval, quarter, i, lesson_obj))
         tasks.append(task)
 
     result = await asyncio.gather(*tasks)
