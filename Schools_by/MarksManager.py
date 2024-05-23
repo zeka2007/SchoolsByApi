@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
+from typing import List
 
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
@@ -24,10 +25,9 @@ class SplitMark(Mark):
                  lesson: LessonsManager.Lesson,
                  first_mark: int,
                  second_mark: int,
-                 value: str,
                  date: datetime = None
                  ):
-        super().__init__(lesson, value, date)
+        super().__init__(lesson, f'{first_mark}/{second_mark}', date)
         self.first_mark = first_mark
         self.second_mark = second_mark
 
@@ -138,7 +138,6 @@ async def get_all_marks_from_page(student: Student,
                                                 ln,
                                                 int(mark.split('/')[0]),
                                                 int(mark.split('/')[1]),
-                                                mark,
                                                 date=mark_date
                                             )
                                         )
@@ -174,3 +173,16 @@ async def get_all_marks(student: Student, quarter: int, lesson_name: str = None)
 
     r = [x for xs in result for x in xs]
     return r
+
+
+def convert_marks_list(marks: List[Mark | SplitMark]) -> List[int]:
+    result = []
+    for mark in marks:
+        if mark.__class__ == Mark:
+            result.append(mark.value)
+
+        if mark.__class__ == SplitMark:
+            result.append(mark.first_mark)
+            result.append(mark.second_mark)
+
+    return result
