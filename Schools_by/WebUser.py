@@ -59,3 +59,22 @@ class WebUser:
                 student_id,
                 self.agent
             )
+
+    async def check_login_data(self, csrf_token: str, session_id: str) -> bool:
+        async with ClientSession() as clientSession:
+            # Retrieve the CSRF token first
+            req = await clientSession.get('https://schools.by/login',
+                                          headers={'user-agent': self.agent},
+                                          cookies={
+                                                'csrftoken': csrf_token,
+                                                'sessionid': session_id,
+                                                'slc_cookie': '{slcMakeBetter}{headerPopupsIsClosed}'
+                                            },
+                                          allow_redirects=True
+                                          )
+
+            redirect_url = str(req.url)
+            req.close()
+            if redirect_url == Config.URL:
+                return False
+            return True
