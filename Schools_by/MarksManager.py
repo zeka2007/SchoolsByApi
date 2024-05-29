@@ -5,8 +5,8 @@ from typing import List
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from . import Student, QuarterManager, LessonsManager
-from ..Utils import PagesManager
+from Schools_by import Student, QuarterManager, LessonsManager
+from Utils import PagesManager
 
 
 class Mark:
@@ -15,11 +15,10 @@ class Mark:
                  value: int | str | None,
                  date: datetime = None
                  ):
+        self.value = value
         if type(value) is str:
             if value.isdigit():
                 self.value = int(value)
-        else:
-            self.value = value
         self.date = date
         self.lesson = lesson
 
@@ -82,7 +81,7 @@ async def get_all_marks_from_page(student: Student,
                                   interval: dict,
                                   quarter: int,
                                   page: int,
-                                  lesson_obj: LessonsManager.Lesson = None) -> list:
+                                  lesson_obj: LessonsManager.Lesson = LessonsManager.Lesson()) -> list:
     # get date
     current_year = datetime.now().year
     start_date = datetime(current_year,
@@ -162,7 +161,8 @@ async def get_all_marks_from_page(student: Student,
         return marks
 
 
-async def get_all_marks(student: Student, quarter: int, lesson_obj: LessonsManager.Lesson = None) -> list:
+async def get_all_marks(student: Student, quarter: int,
+                        lesson_obj: LessonsManager.Lesson = LessonsManager.Lesson()) -> list:
     interval = await PagesManager.get_intervals(student)
 
     weeks = PagesManager.get_pages_count(interval, quarter)

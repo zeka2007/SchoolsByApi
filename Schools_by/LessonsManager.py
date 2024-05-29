@@ -1,12 +1,12 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from . import Student
+from Schools_by import Student
 
 
 class Lesson:
     def __init__(self,
-                 name: str,
+                 name: str = None,
                  full_name: str = None):
         self.full_name = full_name
         self.name = name
