@@ -2,8 +2,8 @@ from math import ceil
 from datetime import datetime
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
-from Schools_by import Student
-from Utils.DateFormat import date_format as df
+from ..Schools_by import Student
+from ..Utils.DateFormat import date_format as df
 
 
 class IntervalData:

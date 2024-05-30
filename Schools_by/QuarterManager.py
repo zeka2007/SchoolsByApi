@@ -1,7 +1,7 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from Schools_by import Student
+from ..Schools_by import Student
 
 
 async def get_quarter_id(student: Student, quarter: int = 0) -> int:

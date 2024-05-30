@@ -1,1 +1,3 @@
-__all__ = ['DateFormat', 'PagesManager']
+__all__ = ['Config', 'DateFormat', 'PagesManager']
+
+from Utils import Config, DateFormat, PagesManager

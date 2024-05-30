@@ -5,8 +5,8 @@ from typing import List
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from Schools_by import Student, QuarterManager, LessonsManager
-from Utils import PagesManager
+from ..Schools_by import Student, QuarterManager, LessonsManager
+from ..Utils import PagesManager
 
 
 class Mark:
