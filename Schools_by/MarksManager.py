@@ -144,8 +144,6 @@ async def get_all_marks_from_page(student: Student,
                                                 date=mark_date
                                             )
                                         )
-                                        marks.append(int(mark.split('/')[0]))
-                                        marks.append(int(mark.split('/')[1]))
                                     else:
                                         marks.append(
                                             Mark(
