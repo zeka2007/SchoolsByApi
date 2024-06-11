@@ -2,11 +2,12 @@ __all__ = [
     'WebUser',
     'Student',
     'StudentData',
-    'MarksManager',
-    'QuarterManager',
-    'LessonsManager'
+    "Mark",
+    "SplitMark",
+    "Lesson",
 ]
 
 from .Student import Student, StudentData
 from .WebUser import WebUser
-from . import MarksManager, QuarterManager, LessonsManager
+from .LessonsManager import Lesson
+from .MarksManager import Mark, SplitMark

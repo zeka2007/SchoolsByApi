@@ -5,13 +5,14 @@ from typing import List
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
-from ..Schools_by import Student, QuarterManager, LessonsManager
+from ..Schools_by import Student, QuarterManager
+from ..Schools_by import Lesson
 from ..Utils import PagesManager
 
 
 class Mark:
     def __init__(self,
-                 lesson: LessonsManager.Lesson,
+                 lesson: Lesson,
                  value: int | str | None,
                  date: datetime = None
                  ):
@@ -25,7 +26,7 @@ class Mark:
 
 class SplitMark(Mark):
     def __init__(self,
-                 lesson: LessonsManager.Lesson,
+                 lesson: Lesson,
                  first_mark: int,
                  second_mark: int,
                  date: datetime = None
@@ -62,7 +63,7 @@ async def get_quarters_marks(student: Student, quarter: int) -> list:
             l_full_name = lessons_names[i]['title']
 
             mark_obj = Mark(
-                LessonsManager.Lesson(l_name, l_full_name),
+                Lesson(l_name, l_full_name),
                 None,
             )
 
@@ -77,11 +78,11 @@ async def get_quarters_marks(student: Student, quarter: int) -> list:
         return q_marks
 
 
-async def get_all_marks_from_page(student: Student,
-                                  interval: dict,
-                                  quarter: int,
-                                  page: int,
-                                  lesson_obj: LessonsManager.Lesson = LessonsManager.Lesson()) -> list:
+async def get_all_data_from_page(student: Student,
+                                 interval: dict,
+                                 quarter: int,
+                                 page: int,
+                                 lesson_obj: Lesson = Lesson()) -> dict:
     # get date
     current_year = datetime.now().year
     start_date = datetime(current_year,
@@ -96,7 +97,7 @@ async def get_all_marks_from_page(student: Student,
 
     date = start_date
 
-    marks = []
+    data_dict = {}
 
     i = 1
     async with ClientSession() as client_session:
@@ -122,6 +123,10 @@ async def get_all_marks_from_page(student: Student,
                 day_int = 0
                 for day in days:
                     lessons = day.find('tbody').find_all('tr')
+                    data_to_insert = []
+                    day_date = start_date + timedelta(
+                        weeks=page - 1,
+                        days=day_int)
                     for lesson in lessons:
                         ln = lesson.find('td', {'class': 'lesson'}).text
                         ln = ln.replace('\n', '')[2:]
@@ -131,36 +136,58 @@ async def get_all_marks_from_page(student: Student,
                             if ln == lesson_obj.name or lesson_obj.name is None:
                                 mark = lesson.find('div', {'class': 'mark_box'}).text
                                 mark = mark.replace('\n', '')
+
                                 if mark != '':
                                     mark_date = start_date + timedelta(
-                                        weeks=page-1,
+                                        weeks=page - 1,
                                         days=day_int)
                                     if mark.find('/') != -1:
-                                        marks.append(
+                                        data_to_insert.append(
                                             SplitMark(
-                                                ln,
+                                                Lesson(ln),
                                                 int(mark.split('/')[0]),
                                                 int(mark.split('/')[1]),
                                                 date=mark_date
                                             )
                                         )
                                     else:
-                                        marks.append(
+                                        data_to_insert.append(
                                             Mark(
-                                                LessonsManager.Lesson(ln),
+                                                Lesson(ln),
                                                 mark,
                                                 date=mark_date
                                             )
                                         )
+                                else:
+                                    data_to_insert.append(
+                                        Lesson(
+                                            ln
+                                        )
+                                    )
                     day_int += 1
+                    data_dict[day_date.strftime("%d.%m")] = data_to_insert
 
             date = date + timedelta(weeks=1)
             i = i + 1
-        return marks
+        return data_dict
+
+
+async def get_all_marks_from_page(student: Student,
+                                  interval: dict,
+                                  quarter: int,
+                                  page: int,
+                                  lesson_obj: Lesson = Lesson()) -> list:
+    data = await get_all_data_from_page(student, interval, quarter, page, lesson_obj)
+    r = []
+    for d in data:
+        for item in data[d]:
+            if item.__class__ in [Mark, SplitMark]:
+                r.append(item.value)
+    return r
 
 
 async def get_all_marks(student: Student, quarter: int,
-                        lesson_obj: LessonsManager.Lesson = LessonsManager.Lesson()) -> list:
+                        lesson_obj: Lesson = Lesson()) -> list:
     interval = await PagesManager.get_intervals(student)
 
     weeks = PagesManager.get_pages_count(interval, quarter)
