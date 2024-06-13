@@ -5,6 +5,7 @@ __all__ = [
     "Mark",
     "SplitMark",
     "Lesson",
+    "QuarterManager"
 ]
 
 from .Student import Student, StudentData
