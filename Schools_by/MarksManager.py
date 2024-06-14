@@ -176,13 +176,14 @@ async def get_all_marks_from_page(student: Student,
                                   interval: dict,
                                   quarter: int,
                                   page: int,
-                                  lesson_obj: Lesson = Lesson()) -> list:
+                                  lesson_obj: Lesson = Lesson()) -> list[Mark | SplitMark]:
     data = await get_all_data_from_page(student, interval, quarter, page, lesson_obj)
     r = []
     for d in data:
         for item in data[d]:
             if item.__class__ in [Mark, SplitMark]:
-                r.append(item.value)
+                item: Mark | SplitMark
+                r.append(item)
     return r
 
 
