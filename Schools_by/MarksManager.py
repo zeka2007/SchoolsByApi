@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 from ..Schools_by import Student, QuarterManager
 from ..Schools_by import Lesson
 from ..Utils import PagesManager
+from ..Utils.DateFormat import Date
 
 
 class Mark:
@@ -84,13 +85,9 @@ async def get_all_data_from_page(student: Student,
                                  page: int,
                                  lesson_obj: Lesson = Lesson()) -> dict:
     # get date
-    current_year = datetime.now().year
-    start_date = datetime(current_year,
-                          interval[quarter].start_month,
-                          interval[quarter].start_date)
-    end_date = datetime(current_year,
-                        interval[quarter].end_month,
-                        interval[quarter].end_date)
+    date_obj = Date(interval, quarter)
+    start_date = date_obj.start_date
+    end_date = date_obj.end_date
 
     # get marks in this quarter
     full_quarter = await QuarterManager.get_quarter_id(student, quarter)

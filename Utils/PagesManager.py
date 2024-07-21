@@ -4,6 +4,7 @@ from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 from ..Schools_by import Student
 from ..Utils.DateFormat import date_format as df
+from ..Utils.DateFormat import Date
 
 
 class IntervalData:
@@ -52,34 +53,15 @@ async def get_intervals(student: Student) -> dict:
 
 
 def get_pages_count(intervals: dict, quarter: int) -> int:
-    # get date
-    current_year = datetime.now().year
-    # if quarter <= 2:
-    #     start_date = datetime.datetime(current_year - 1,
-    #                                    interval[quarter]['start_month'],
-    #                                    interval[quarter]['start_date'])
-    #     end_date = datetime.datetime(current_year - 1,
-    #                                  interval[quarter]['end_month'],
-    #                                  interval[quarter]['end_date'])
-    # else:
-    start_date = datetime(current_year,
-                          intervals[quarter].start_month,
-                          intervals[quarter].start_date)
-    end_date = datetime(current_year,
-                        intervals[quarter].end_month,
-                        intervals[quarter].end_date)
+    date_obj = Date(intervals, quarter)
 
-    date = end_date - start_date
+    date = date_obj.end_date - date_obj.start_date
 
     return int(((date.days - (date.days % 7)) / 7) + 1)
 
 
 def get_current_page(intervals: dict, quarter: int) -> int:
-    current_year = datetime.now().year
     current_day = datetime.now()
-
-    start_date = datetime(current_year,
-                          intervals[quarter].start_month,
-                          intervals[quarter].start_date)
+    start_date = Date(intervals, quarter).start_date
     days_count = (current_day - start_date).days
     return ceil(days_count / 7)
