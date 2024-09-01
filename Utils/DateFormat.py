@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime
 
 date_format = {
     'января': 1,
@@ -23,9 +23,12 @@ class Date:
         current_date = datetime.now()
         current_year = current_date.year
 
-        if current_date.month in range(1, 8):
+        if current_date.month in range(1, 9):
             if quarter <= 2:
                 current_year = current_year - 1
+        else:
+            if quarter > 2:
+                current_year = current_year + 1
 
         self.start_date = datetime(current_year,
                                    intervals[quarter].start_month,
