@@ -1,5 +1,8 @@
 from aiohttp import ClientSession
 from bs4 import BeautifulSoup
+from .Lessons import LessonsManager
+from .Marks import MarksManager
+from .Quarters import QuartersManager
 
 
 class StudentData:
@@ -37,7 +40,13 @@ class Student:
             'slc_cookie': '{slcMakeBetter}{headerPopupsIsClosed}'
         }
 
+        self.managers = Managers(self)
+
     async def get_student_info(self) -> StudentData:
+        """
+        Get student data from main page
+        :return: Data in StudentData class
+        """
         info = {
             'student_name': None,
             'class': None,
@@ -69,3 +78,10 @@ class Student:
                 info['class'],
                 info['birthday']
             )
+
+
+class Managers:
+    def __init__(self, student: Student):
+        self.lessons = LessonsManager(student)
+        self.marks = MarksManager(student)
+        self.quarters = QuartersManager(student)

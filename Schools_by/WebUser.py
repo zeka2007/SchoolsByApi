@@ -9,6 +9,12 @@ class WebUser:
         self.agent = agent
 
     async def login_user(self, login: str, password: str) -> Student | None:
+        """
+        Trying login in SCHOOLS.BY account\n
+        :param login: SCHOOLS.BY login
+        :param password: SCHOOLS.BY password
+        :return: Student object if login successful, None if error occurred
+        """
         headers = {
             'user-agent': self.agent,
             'Referer': Config.URL
@@ -61,6 +67,12 @@ class WebUser:
             )
 
     async def check_login_data(self, csrf_token: str, session_id: str) -> bool:
+        """
+        Check if possible auth in account using csrf token and session id
+        :param csrf_token: value from cookies after success login
+        :param session_id: value from cookies after success login
+        :return: True if auth successful, False if auth failed
+        """
         async with ClientSession() as clientSession:
             # Retrieve the CSRF token first
             req = await clientSession.get('https://schools.by/login',

@@ -20,6 +20,11 @@ class IntervalData:
 
 
 async def get_intervals(student: Student) -> dict:
+    """
+    Get quarters start and end date
+    :param student: SCHOOLS.BY user with valid account
+    :return: Dict of intervals, where key is quarter and value is interval
+    """
     async with ClientSession() as client_session:
         interval = {}
 
@@ -53,6 +58,12 @@ async def get_intervals(student: Student) -> dict:
 
 
 def get_pages_count(intervals: dict, quarter: int) -> int:
+    """
+    Get pages count in selected quarter
+    :param intervals: dict of start and end dates for quarters
+    :param quarter: number from 1 to 4
+    :return: pages count
+    """
     date_obj = Date(intervals, quarter)
 
     date = date_obj.end_date - date_obj.start_date
@@ -61,6 +72,12 @@ def get_pages_count(intervals: dict, quarter: int) -> int:
 
 
 def get_current_page(intervals: dict, quarter: int) -> int:
+    """
+    Get index of current page in selected quarter
+    :param intervals: dict of start and end dates for quarters
+    :param quarter: number from 1 to 4, should be current quarter
+    :return: page index, start from 1
+    """
     current_day = datetime.now()
     start_date = Date(intervals, quarter).start_date
     days_count = (current_day - start_date).days
